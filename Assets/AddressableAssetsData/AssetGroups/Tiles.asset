@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Tiles
+  m_EditorClassIdentifier: 
+  m_GroupName: Tiles
+  m_GUID: 7252caf84d5c33a4fb70fb11d03fe605
+  m_SerializeEntries:
+  - m_GUID: 0bf41208d5c65ff4ab179281d8361980
+    m_Address: Assets/Mauritania/Prefabs/mauritania_tile_02.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - tile2
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0fb63aa1c6fae6e4d97c642c40782a82
+    m_Address: Assets/Mauritania/Prefabs/mauritania_tile_04.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - tile4
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2b1c8aa2e5fa4364885b94da8e756647
+    m_Address: Assets/Mauritania/Prefabs/mauritania_tile_07.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - tile7
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 442c2d7cebb8d8d4e905c69037fc0b81
+    m_Address: Assets/Mauritania/Prefabs/mauritania_tile_01.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - tile
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 80e59b4df02df28499d0fc2bc4350b26
+    m_Address: Assets/Mauritania/Prefabs/mauritania_tile_05.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - tile5
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8393838a5a97f0443999566b0e35059f
+    m_Address: Assets/Mauritania/Prefabs/mauritania_tile_06.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - tile6
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 93e3b4bbedafd164d8ba1d8c8859c3f5
+    m_Address: Assets/Mauritania/Prefabs/mauritania_tile_03.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - tile3
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d732ac8b5d3d47548814bd705fbe6b4d
+    m_Address: Assets/Mauritania/Prefabs/tile_water_02.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - water
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 6690021c6f732ca4382fc31368c03a23, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0d0a6751fa87cbb48a39189fa3f5d3ee, type: 2}
+    - {fileID: 11400000, guid: e820103a286edc440be9c3f3fd55dfb6, type: 2}
