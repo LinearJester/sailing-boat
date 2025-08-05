@@ -19,19 +19,19 @@ MonoBehaviour:
     m_Address: Assets/Mauritania/Prefabs/mauritania_tile_02.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
-    - tile2
+    - tile
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0fb63aa1c6fae6e4d97c642c40782a82
     m_Address: Assets/Mauritania/Prefabs/mauritania_tile_04.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
-    - tile4
+    - tile
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2b1c8aa2e5fa4364885b94da8e756647
     m_Address: Assets/Mauritania/Prefabs/mauritania_tile_07.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
-    - tile7
+    - tile
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 442c2d7cebb8d8d4e905c69037fc0b81
     m_Address: Assets/Mauritania/Prefabs/mauritania_tile_01.prefab
@@ -43,19 +43,25 @@ MonoBehaviour:
     m_Address: Assets/Mauritania/Prefabs/mauritania_tile_05.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
-    - tile5
+    - tile
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8393838a5a97f0443999566b0e35059f
     m_Address: Assets/Mauritania/Prefabs/mauritania_tile_06.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
-    - tile6
+    - tile
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 93e3b4bbedafd164d8ba1d8c8859c3f5
     m_Address: Assets/Mauritania/Prefabs/mauritania_tile_03.prefab
     m_ReadOnly: 0
     m_SerializedLabels:
-    - tile3
+    - tile
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c2b714c05be4b44fb64bc60e69eba3e
+    m_Address: Assets/Mauritania/Prefabs/mauritania_background_water.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - background
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d732ac8b5d3d47548814bd705fbe6b4d
     m_Address: Assets/Mauritania/Prefabs/tile_water_02.prefab

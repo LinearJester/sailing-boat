@@ -457,15 +457,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapTextAsset: {fileID: 4900000, guid: 60f4b7f2ec111494b8d26b3d4ab90f3c, type: 3}
   TileSize: {x: 1, y: 1}
-  TileKeys:
-  - water
-  - tile
-  - tile2
-  - tile3
-  - tile4
-  - tile5
-  - tile6
-  - tile7
+  TilesKey: tile
+  WaterKey: water
+  BackgroundKey: background
 --- !u!4 &988767551
 Transform:
   m_ObjectHideFlags: 0
