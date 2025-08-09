@@ -10,75 +10,88 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Vegetation
+  m_Name: Environment
   m_EditorClassIdentifier: 
-  m_GroupName: Vegetation
+  m_GroupName: Environment
   m_GUID: 6daaf80c4ef24b04e91884461e3dc640
   m_SerializeEntries:
   - m_GUID: 0354479538a422a4ebfba32815f9326b
     m_Address: Assets/Mauritania/Prefabs/mauritania_hut.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 278c0478a35a9bf4eaae05cd73ca6a61
     m_Address: Assets/Mauritania/Prefabs/mauritania_rock_set_02.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3f317689a355fba41b9a6a3f9bf5f3d3
     m_Address: Assets/Mauritania/Prefabs/mauritania_rock_set_01.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 49d8814ced7610844acde9ae57b0f326
     m_Address: Assets/Mauritania/Prefabs/mauritania_vegetation_set_01.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 68650c38e034c5a4ca877b9375661926
     m_Address: Assets/Mauritania/Prefabs/mauritania_grass_02.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 79bc8673043ebe146b9e496e7b4f1d0c
     m_Address: Assets/Mauritania/Prefabs/mauritania_rock_01.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9116ae3ed54f176408083e9aa8cd357b
     m_Address: Assets/Mauritania/Prefabs/mauritania_plant_01.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a9e5a049f689cab46be5f32cd154c4a0
     m_Address: Assets/Mauritania/Prefabs/mauritania_rock_set_03.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b35c3520e51f16b4b926de456ba3442b
     m_Address: Assets/Mauritania/Prefabs/mauritania_palm.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: df809b48b58e584468231963047f5650
     m_Address: Assets/Mauritania/Prefabs/mauritania_rock_03.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e64f4c88ce5e5b04494ed2f910f74e52
     m_Address: Assets/Mauritania/Prefabs/mauritania_vegetation_set_02.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f2d92782d314589408b05dce455e8835
     m_Address: Assets/Mauritania/Prefabs/mauritania_rock_02.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f94efc3b08bcea34381f82052a789817
     m_Address: Assets/Mauritania/Prefabs/mauritania_grass_01.prefab
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - environment
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 6690021c6f732ca4382fc31368c03a23, type: 2}

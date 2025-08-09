@@ -100,15 +100,10 @@ MonoBehaviour:
     m_ProfileVersion: 1
   m_LabelTable:
     m_LabelNames:
-    - default
     - water
     - tile
-    - tile2
-    - tile3
-    - tile4
-    - tile5
-    - tile6
-    - tile7
+    - environment
+    - Environment
     - background
     - boat
   m_SchemaTemplates: []
