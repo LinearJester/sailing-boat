@@ -33,7 +33,6 @@ public class Pathfinder : ScriptableObject
             priorityQueue.Remove(min);
 
             var current = min.node;
-            //var current = hexGrid[(Vector2Int)min];
 
             //var removed = priorityQueue.Remove(current);
             //Debug.Log($"the node: ({current.X}, {current.Y}) was removed: {removed}");
@@ -49,6 +48,7 @@ public class Pathfinder : ScriptableObject
                 var containedNeighbor = priorityQueue.Contains(neighborPriority);
                 if (containedNeighbor)
                     priorityQueue.Remove(neighborPriority);
+
 
                 int cost = costSoFar[current] + 1;
                 if (!costSoFar.ContainsKey(neighbor))
@@ -66,26 +66,15 @@ public class Pathfinder : ScriptableObject
                     neighborPriority.priority = cost + Heuristic(neighbor, destination);
                     priorityQueue.Add(neighborPriority);
                 }
-                else
+                else if (cost < costSoFar[neighbor])
                 {
-                    if (cost < costSoFar[neighbor])
-                    {
-                        if (!costSoFar.TryAdd(neighbor, cost))
-                        {
-                            costSoFar[neighbor] = cost;
-                        }
+                    costSoFar[neighbor] = cost;
+                    cameFrom[neighbor] = current;
 
-                        if (!cameFrom.TryAdd(neighbor, current))
-                        {
-                            cameFrom[neighbor] = current;
-                        }
-
-                        neighborPriority.priority = cost + Heuristic(neighbor, destination);
-                        priorityQueue.Add(neighborPriority);
-                    }
+                    neighborPriority.priority = cost + Heuristic(neighbor, destination);
+                    priorityQueue.Add(neighborPriority);
                 }
-
-                if (containedNeighbor)
+                else if (containedNeighbor)
                     priorityQueue.Add(neighborPriority);
             }
 
@@ -152,7 +141,7 @@ public class Pathfinder : ScriptableObject
 //    }
 //}
 
-public struct PathNodePriority
+public class PathNodePriority
 {
     public PathNode node;
     public int priority;
