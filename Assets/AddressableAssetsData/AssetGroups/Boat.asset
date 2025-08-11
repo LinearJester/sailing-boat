@@ -10,14 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: Boat
   m_EditorClassIdentifier: 
-  m_GroupName: Default Local Group
-  m_GUID: 713241da23592ec4c872362d69730179
-  m_SerializeEntries: []
+  m_GroupName: Boat
+  m_GUID: d9db25f06ea444244ae033aa761002af
+  m_SerializeEntries:
+  - m_GUID: a563157a4ceeb234d8d2b8bbbd4d5ab4
+    m_Address: Assets/Mauritania/Prefabs/mauritania_boat.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - boat
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 6690021c6f732ca4382fc31368c03a23, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 137ae18385e4b01408fead1980754ea8, type: 2}
-    - {fileID: 11400000, guid: 3cec9d39089b02f4dbb57ae6f8d99d82, type: 2}
+    - {fileID: 11400000, guid: c24ac76582ba15d4a8a8d982d4212332, type: 2}
+    - {fileID: 11400000, guid: 41e1cbb8c5c0da847be1d47ec8478c3b, type: 2}

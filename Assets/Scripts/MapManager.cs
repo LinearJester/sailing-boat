@@ -2,61 +2,69 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unity.Collections;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using Random = UnityEngine.Random;
 
 public class MapManager : MonoBehaviour
 {
-    public TextAsset mapTextAsset;
-    public Vector3 TileSize;
-    public Vector2 BackgroundSize;
-    [Range(0, 100)]
-    public float EnvironmentDensity;
+    public Vector3 tileSize;
+    public Vector2 backgroundSize; [Range(0, 100)]
+    public float environmentDensity;
 
-    public string TilesKey;
-    public string WaterKey;
-    public string BackgroundKey;
-    public string EnvironmentKey;
+    public Vector2Int boatStartPos;
+    public CameraFollow cameraFollow;
+    public Pathfinder pathfinder;
+    public HexGridBoatController gridBoatController;
+
+    public string mapKey;
+    public string tilesKey;
+    public string boatKey;
+    public string waterKey;
+    public string backgroundKey;
+    public string environmentKey;
+
+    private TextAsset _mapTextAsset;
 
     private List<GameObject> _tilesPrefabs = new List<GameObject>();
-    private List<GameObject> _waterPrefabs = new List<GameObject>();
+    //private List<GameObject> _waterPrefabs = new List<GameObject>();
+    private GameObject _waterPrefab;
+    private GameObject _boatPrefab;
     private List<GameObject> _backgroundPrefabs = new List<GameObject>();
     private List<GameObject> _environmentPrefabs = new List<GameObject>();
 
-    private List<Vector3> _waterPositions = new List<Vector3>();
-    private List<GameObject> _water = new List<GameObject>();
     private List<Vector3> _tilesPositions = new List<Vector3>();
-    private List<GameObject> _tiles = new List<GameObject>();
     private List<Vector3> _backgroundPositions = new List<Vector3>();
-    private List<GameObject> _background = new List<GameObject>();
     private Vector2 _mapSize;
-    private Vector2Int[,] _grid = new Vector2Int[0, 0];
 
-    private Dictionary<Vector3, Vector2Int> _hexMap = new Dictionary<Vector3, Vector2Int>();
+    private Dictionary<Vector2Int, Vector3> _hexMapPositions = new Dictionary<Vector2Int, Vector3>();
     private async void Start()
     {
         var loadTask = LoadAssets();
 
         Debug.Log("started loading map");
-        LoadMap();
+        await LoadMap();
         Debug.Log("ended loading map");
 
         await loadTask;
 
+        loadTask.Dispose();
+
         GenerateMap();
     }
-
-    private void LoadMap()
+    private async Awaitable LoadMap()
     {
-        _waterPositions.Clear();
+        _hexMapPositions.Clear();
         _tilesPositions.Clear();
         _backgroundPositions.Clear();
 
         _mapSize = Vector2.zero;
+
+        var handle = Addressables.LoadAssetAsync<TextAsset>(mapKey);
+        await handle.Task;
+
+        _mapTextAsset = handle.Result;
+        handle.Release();
 
         float offsetX = 0;
         float offsetZ = 0;
@@ -65,12 +73,10 @@ public class MapManager : MonoBehaviour
         int gridHeightX = 0;
         int gridHeightY = 0;
 
-        var map = mapTextAsset.text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        var map = _mapTextAsset.text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
         gridHeightX = map[0].Length;
         gridHeightY = map.Length;
-
-        _grid = new Vector2Int[gridHeightX, gridHeightY];
 
         int middleIndexX = gridHeightX / 2;
         int middleIndexY = gridHeightY / 2;
@@ -86,26 +92,23 @@ public class MapManager : MonoBehaviour
                 Vector3 pos = new Vector3(offsetX, 0, offsetZ);
                 if (map[i][j] == '0')
                 {
-                    _waterPositions.Add(pos);
+                    Vector2Int hexPos = new Vector2Int(hexRowStartingIndex + j, hexColumnStartingIndex + i);
+
+                    _hexMapPositions.Add(hexPos, pos);
                 }
                 else
                 {
                     _tilesPositions.Add(pos);
                 }
-                offsetX += TileSize.x;
-
-                Vector2Int hexPos = new Vector2Int(hexRowStartingIndex + j, hexColumnStartingIndex + i);
-
-                _grid[j, i] = hexPos;
-                _hexMap.Add(pos, hexPos);
+                offsetX += tileSize.x;
             }
 
             if (offsetX > _mapSize.x)
             {
                 _mapSize.x = offsetX;
             }
-            offsetX = hexagonalOffset ? 0 : TileSize.x / 2.0f;
-            offsetZ -= TileSize.z;
+            offsetX = hexagonalOffset ? 0 : tileSize.x / 2.0f;
+            offsetZ -= tileSize.z;
             hexagonalOffset = !hexagonalOffset;
 
 
@@ -113,7 +116,7 @@ public class MapManager : MonoBehaviour
 
         _mapSize.y = Mathf.Abs(offsetZ);
 
-        Vector2 backgroundTilesAmount = new Vector2(_mapSize.x / BackgroundSize.x, _mapSize.y / BackgroundSize.y);
+        Vector2 backgroundTilesAmount = new Vector2((_mapSize.x / backgroundSize.x) + 1, (_mapSize.y / backgroundSize.y) + 1);
 
         offsetX = 0;
         offsetZ = 0;
@@ -122,44 +125,33 @@ public class MapManager : MonoBehaviour
         {
             for (int j = 0; j < backgroundTilesAmount.y; j++)
             {
-                _backgroundPositions.Add(new Vector3(offsetX + (i * BackgroundSize.x), 0, offsetZ - (j * BackgroundSize.y)));
+                _backgroundPositions.Add(new Vector3(offsetX + (i * backgroundSize.x), 0, offsetZ - (j * backgroundSize.y)));
             }
         }
+
+        _mapTextAsset = null;
     }
 
     private async Task LoadAssets()
     {
         Debug.Log("started loading assets");
-        //for (int i = 0; i < TileKeys.Count; i++)
-        //{
-        //    int current = i;
-        //    var handle = Addressables.LoadAssetAsync<GameObject>(TileKeys[i]);
-        //    handle.Completed += (h) =>
-        //    {
-        //        foreach (var pos in _map[current])
-        //        {
-        //            var tile = h.Result;
-        //            Instantiate(tile, pos, tile.transform.rotation, transform);
-        //        }
 
-        //        Debug.Log($"Loaded asset nr: {current}");
+        var waterHandle = Addressables.LoadAssetAsync<GameObject>(waterKey);
+        var boatHandle = Addressables.LoadAssetAsync<GameObject>(boatKey);
+        var tileHandle = Addressables.LoadAssetsAsync<GameObject>(tilesKey);
+        var backgroundHandle = Addressables.LoadAssetsAsync<GameObject>(backgroundKey);
+        var environmentHandle = Addressables.LoadAssetsAsync<GameObject>(environmentKey);
 
-        //    };
-        //    handle.ReleaseHandleOnCompletion();
-        //}
+        await Task.WhenAll(waterHandle.Task, boatHandle.Task, backgroundHandle.Task, tileHandle.Task, environmentHandle.Task);
 
-        var waterHandle = Addressables.LoadAssetsAsync<GameObject>(WaterKey,
-            addressable => { _waterPrefabs.Add(addressable); }, Addressables.MergeMode.Union);
-        var tileHandle = Addressables.LoadAssetsAsync<GameObject>(TilesKey,
-            addressable => { _tilesPrefabs.Add(addressable); }, Addressables.MergeMode.Union);
-        var backgroundHandle = Addressables.LoadAssetsAsync<GameObject>(BackgroundKey,
-            addressable => { _backgroundPrefabs.Add(addressable); }, Addressables.MergeMode.Union);
-        var environmentHandle = Addressables.LoadAssetsAsync<GameObject>(EnvironmentKey,
-            addressable => { _environmentPrefabs.Add(addressable); }, Addressables.MergeMode.Union);
-
-        await Task.WhenAll(waterHandle.Task, backgroundHandle.Task, tileHandle.Task, environmentHandle.Task);
+        _waterPrefab = waterHandle.Result;
+        _boatPrefab = boatHandle.Result;
+        _tilesPrefabs = tileHandle.Result.ToList();
+        _backgroundPrefabs = backgroundHandle.Result.ToList();
+        _environmentPrefabs = environmentHandle.Result.ToList();
 
         waterHandle.Release();
+        boatHandle.Release();
         backgroundHandle.Release();
         tileHandle.Release();
         environmentHandle.Release();
@@ -173,23 +165,12 @@ public class MapManager : MonoBehaviour
 
         Dictionary<int, List<Vector3>> positions = new Dictionary<int, List<Vector3>>();
 
-        for (int i = 0; i < _waterPrefabs.Count; i++)
-        {
-            positions.TryAdd(i, new List<Vector3>());
-        }
-        foreach (var waterPosition in _waterPositions)
-        {
-            var random = Random.Range(0, _waterPrefabs.Count);
-            positions[random].Add(waterPosition);
-        }
+        var waterHandle = InstantiateAsync(_waterPrefab, _hexMapPositions.Count, transform);
 
-        for (int i = 0; i < _waterPrefabs.Count; i++)
-        {
-            var handle = InstantiateAsync(_waterPrefabs[i], positions[i].Count,
-                new ReadOnlySpan<Vector3>(positions[i].ToArray()), ReadOnlySpan<Quaternion>.Empty,
-                new InstantiateParameters() { parent = transform });
-            operations.Add(handle);
-        }
+        if (!_hexMapPositions.ContainsKey(boatStartPos))
+            boatStartPos = _hexMapPositions.Keys.First();
+
+        var boatHandle = InstantiateAsync(_boatPrefab, _hexMapPositions[boatStartPos], Quaternion.identity);
 
         for (int i = 0; i < _tilesPrefabs.Count; i++)
         {
@@ -207,9 +188,8 @@ public class MapManager : MonoBehaviour
 
         for (int i = 0; i < _tilesPrefabs.Count; i++)
         {
-            var handle = InstantiateAsync(_tilesPrefabs[i], positions[i].Count,
-                new ReadOnlySpan<Vector3>(positions[i].ToArray()), ReadOnlySpan<Quaternion>.Empty,
-                new InstantiateParameters() { parent = transform });
+            var handle = InstantiateAsync(_tilesPrefabs[i], positions[i].Count, transform,
+                new ReadOnlySpan<Vector3>(positions[i].ToArray()), ReadOnlySpan<Quaternion>.Empty);
             operations.Add(handle);
         }
 
@@ -230,9 +210,8 @@ public class MapManager : MonoBehaviour
 
         for (int i = 0; i < _backgroundPrefabs.Count; i++)
         {
-            var handle = InstantiateAsync(_backgroundPrefabs[i], positions[i].Count,
-                new ReadOnlySpan<Vector3>(positions[i].ToArray()), ReadOnlySpan<Quaternion>.Empty,
-                new InstantiateParameters() { parent = transform });
+            var handle = InstantiateAsync(_backgroundPrefabs[i], positions[i].Count, transform,
+                new ReadOnlySpan<Vector3>(positions[i].ToArray()), ReadOnlySpan<Quaternion>.Empty);
             operations.Add(handle);
         }
 
@@ -248,80 +227,100 @@ public class MapManager : MonoBehaviour
         foreach (var tilesPosition in _tilesPositions)
         {
             var spawn = Random.Range(0, 100);
-            if (spawn < EnvironmentDensity)
+            if (spawn < environmentDensity)
             {
                 var random = Random.Range(0, _environmentPrefabs.Count);
-                positions[random].Add(tilesPosition + new Vector3(0, TileSize.y, 0));
+                positions[random].Add(tilesPosition + new Vector3(0, tileSize.y, 0));
             }
         }
 
         for (int i = 0; i < _environmentPrefabs.Count; i++)
         {
-            var handle = InstantiateAsync(_environmentPrefabs[i], positions[i].Count,
-                new ReadOnlySpan<Vector3>(positions[i].ToArray()), ReadOnlySpan<Quaternion>.Empty,
-                new InstantiateParameters() { parent = transform });
+            var handle = InstantiateAsync(_environmentPrefabs[i], positions[i].Count, transform,
+                new ReadOnlySpan<Vector3>(positions[i].ToArray()), ReadOnlySpan<Quaternion>.Empty);
             operations.Add(handle);
         }
 
+        await waterHandle;
 
-        await operations[0];
+        var water = waterHandle.Result;
 
-        _water = operations[0].Result.ToList();
+        Dictionary<Vector2Int, PathNode> hexMap = new Dictionary<Vector2Int, PathNode>();
 
-
-        foreach (var tile in _water)
+        int k = 0;
+        foreach (var tile in _hexMapPositions)
         {
-            var pathNode = tile.GetComponent<PathNode>();
+            var pathNode = water[k++].GetComponent<PathNode>();
 
-            pathNode.X = _hexMap[tile.transform.position].x;
-            pathNode.Y = _hexMap[tile.transform.position].y;
-
+            pathNode.Coordinates = tile.Key;
+            pathNode.transform.position = tile.Value;
+            hexMap.Add(pathNode.Coordinates, pathNode);
         }
 
-        foreach (var tile in _water)
+        foreach (var tile in water)
         {
             var pathNode = tile.GetComponent<PathNode>();
-            foreach (var tile2 in _water)
-            {
-                var pathNode2 = tile2.GetComponent<PathNode>();
 
-                if (Heuristic(pathNode, pathNode2) == 1)
-                {
-                    pathNode.Neighbors.Add(pathNode2);
-                }
+            Vector2Int potentialNeighbor = Vector2Int.zero;
+            potentialNeighbor.x = pathNode.X;
+            potentialNeighbor.y = pathNode.Y - 1;
+
+            if (hexMap.ContainsKey(potentialNeighbor))
+            {
+                pathNode.Neighbors.Add(hexMap[potentialNeighbor]);
+            }
+
+            potentialNeighbor.x = pathNode.X + 1;
+            if (hexMap.ContainsKey(potentialNeighbor))
+            {
+                pathNode.Neighbors.Add(hexMap[potentialNeighbor]);
+            }
+
+            potentialNeighbor.x = pathNode.X - 1;
+            potentialNeighbor.y = pathNode.Y;
+            if (hexMap.ContainsKey(potentialNeighbor))
+            {
+                pathNode.Neighbors.Add(hexMap[potentialNeighbor]);
+            }
+
+            potentialNeighbor.x = pathNode.X + 1;
+            if (hexMap.ContainsKey(potentialNeighbor))
+            {
+                pathNode.Neighbors.Add(hexMap[potentialNeighbor]);
+            }
+
+            potentialNeighbor.y = pathNode.Y + 1;
+            potentialNeighbor.x = pathNode.X;
+            if (hexMap.ContainsKey(potentialNeighbor))
+            {
+                pathNode.Neighbors.Add(hexMap[potentialNeighbor]);
+            }
+
+            potentialNeighbor.x = pathNode.X - 1;
+            if (hexMap.ContainsKey(potentialNeighbor))
+            {
+                pathNode.Neighbors.Add(hexMap[potentialNeighbor]);
             }
         }
 
-        operations.ForEach(x => x.WaitForCompletion());
+        await boatHandle;
+        var boat = boatHandle.Result;
 
+        cameraFollow.Follow = boat[0].transform;
+        gridBoatController.Boat = boat[0].GetComponent<Boat>();
+        gridBoatController.RegisterNodes(hexMap.Values.ToList());
 
+        foreach (var asyncInstantiateOperation in operations)
+        {
+            await asyncInstantiateOperation;
+        }
+
+        _waterPrefab = null;
+        _boatPrefab = null;
+        _tilesPrefabs.Clear();
+        _backgroundPrefabs.Clear();
+        _environmentPrefabs.Clear();
 
         Debug.Log("Spawned");
-
-        //await Task.WhenAll(SpawnTilesOnPositions(_waterPrefabs, _waterPositions),
-        //    SpawnTilesOnPositions(_tilesPrefabs, _tilesPositions));
-
-    }
-
-    private async Task SpawnTilesOnPositions(GameObject prefab, List<Vector3> positions)
-    {
-        var handle = InstantiateAsync(prefab, count: positions.Count, new ReadOnlySpan<Vector3>(positions.ToArray()), ReadOnlySpan<Quaternion>.Empty, new InstantiateParameters() { parent = transform });
-        await handle;
-        _water = handle.Result.ToList();
-    }
-
-    public int Heuristic(PathNode a, PathNode b)
-    {
-        var dx = a.X - b.X;
-        var dy = a.Y - b.Y;
-
-        if (Math.Sign(dx) == Math.Sign(dy))
-        {
-            return Mathf.Abs(dx + dy);
-        }
-        else
-        {
-            return Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy));
-        }
     }
 }

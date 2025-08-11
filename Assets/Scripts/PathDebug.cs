@@ -11,30 +11,32 @@ public class PathDebug : MonoBehaviour
     private PathNode _a;
     private PathNode _b;
 
-    private CancellationTokenSource cts = new CancellationTokenSource();
+    private CancellationTokenSource _cts = new CancellationTokenSource();
 
     public void Click(PathNode node)
     {
-        if (_a == null)
-            _a = node;
-        else if (_b == null)
-        {
-            _b = node;
-            DisplayPath();
-        }
-        else
-        {
-            _a = null;
-            _b = null;
-        }
+        //FindFirstObjectByType<Boat>().GoTo(node);
+        //if (_a == null)
+        //    _a = node;
+        //else if (_b == null)
+        //{
+        //    _b = node;
+        //    //await DisplayPath();
+        //    FindFirstObjectByType<Boat>().GoTo(node);
+        //}
+        //else
+        //{
+        //    _a = null;
+        //    _b = null;
+        //}
     }
 
-    public async void DisplayPath()
+    public async Awaitable DisplayPath()
     {
         if (_a == null || _b == null)
             return;
 
-        var task = Task.Run(() => pathfinder.FindPath(_a, _b, cts.Token));
+        var task = Task.Run(() => pathfinder.FindPath(_a, _b, _cts.Token));
 
         await task;
 
@@ -42,19 +44,12 @@ public class PathDebug : MonoBehaviour
 
         foreach (var pathNode in path)
         {
-            pathNode.Highlight();
+            pathNode.Highlight(true);
         }
 
         for (int i = 0; i < path.Count - 1; i++)
         {
             Debug.DrawLine(path[i].transform.position, path[i + 1].transform.position, Color.green, 10);
-        }
-
-        await Delay(10);
-
-        foreach (var pathNode in path)
-        {
-            pathNode.Highlight();
         }
     }
 
@@ -65,6 +60,6 @@ public class PathDebug : MonoBehaviour
 
     private void OnDestroy()
     {
-        cts.Cancel();
+        _cts.Cancel();
     }
 }

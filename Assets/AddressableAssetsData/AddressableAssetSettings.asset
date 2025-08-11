@@ -59,9 +59,11 @@ MonoBehaviour:
   m_BuildAddressablesWithPlayerBuild: 0
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
+  - {fileID: 11400000, guid: 5bac60bcc177c7d49a6de7f36a4ca6ff, type: 2}
   - {fileID: 11400000, guid: 4ff3e088b00da77488ddd30bfacddf93, type: 2}
   - {fileID: 11400000, guid: 78e50c0bcacceeb49b8819434a71737c, type: 2}
   - {fileID: 11400000, guid: b1987c0fdf948434d91ddf41290661b0, type: 2}
+  - {fileID: 11400000, guid: eba0154a4ecb8c94b8337510dffd0ffb, type: 2}
   m_BuildSettings:
     m_LogResourceManagerExceptions: 1
     m_BundleBuildPath: Temp/com.unity.addressables/AssetBundles
@@ -106,6 +108,8 @@ MonoBehaviour:
     - Environment
     - background
     - boat
+    - map1
+    - map2
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: b1c6167535e2d0948bf0b4b313a060ff, type: 2}

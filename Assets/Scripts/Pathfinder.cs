@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Create Pathfinder", fileName = "Pathfinder", order = 0)]
 public class Pathfinder : ScriptableObject
 {
-
     public async Task<List<PathNode>> FindPath(PathNode start, PathNode destination, CancellationToken token)
     {
         System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
         stopwatch.Start();
 
+        var startNode = new Vector3Int(start.X, start.Y, 0);
+
         //Debug.Log($"Started pathfinding from ({start.X}, {start.Y}) to ({destination.X}, {destination.Y})...");
         Dictionary<PathNode, PathNode> cameFrom = new Dictionary<PathNode, PathNode>();
         Dictionary<PathNode, int> costSoFar = new Dictionary<PathNode, int>() { { start, 0 } };
-        SortedSet<PathNode> priorityQueue = new SortedSet<PathNode>(new PathNodeComparer()) { start };
+        SortedSet<PathNodePriority> priorityQueue = new SortedSet<PathNodePriority>(new PathNodePriorityComparer()) { new(start, 0) };
 
 
         while (priorityQueue.Any())
@@ -29,11 +29,12 @@ public class Pathfinder : ScriptableObject
                 token.ThrowIfCancellationRequested();
             }
 
+            var min = priorityQueue.Min;
+            priorityQueue.Remove(min);
 
-            //var current = priorityQueue.First();
-            var current = priorityQueue.Min;
+            var current = min.node;
+            //var current = hexGrid[(Vector2Int)min];
 
-            priorityQueue.Remove(current);
             //var removed = priorityQueue.Remove(current);
             //Debug.Log($"the node: ({current.X}, {current.Y}) was removed: {removed}");
 
@@ -44,9 +45,10 @@ public class Pathfinder : ScriptableObject
 
             foreach (var neighbor in current.Neighbors)
             {
-                var cointainedNeighbor = priorityQueue.Contains(neighbor);
-                if (cointainedNeighbor)
-                    priorityQueue.Remove(neighbor);
+                var neighborPriority = new PathNodePriority(neighbor, 0);
+                var containedNeighbor = priorityQueue.Contains(neighborPriority);
+                if (containedNeighbor)
+                    priorityQueue.Remove(neighborPriority);
 
                 int cost = costSoFar[current] + 1;
                 if (!costSoFar.ContainsKey(neighbor))
@@ -61,8 +63,8 @@ public class Pathfinder : ScriptableObject
                         cameFrom[neighbor] = current;
                     }
 
-                    neighbor.Priority = cost + Heuristic(neighbor, destination);
-                    priorityQueue.Add(neighbor);
+                    neighborPriority.priority = cost + Heuristic(neighbor, destination);
+                    priorityQueue.Add(neighborPriority);
                 }
                 else
                 {
@@ -78,13 +80,13 @@ public class Pathfinder : ScriptableObject
                             cameFrom[neighbor] = current;
                         }
 
-                        neighbor.Priority = cost + Heuristic(neighbor, destination);
-                        priorityQueue.Add(neighbor);
+                        neighborPriority.priority = cost + Heuristic(neighbor, destination);
+                        priorityQueue.Add(neighborPriority);
                     }
                 }
 
-                if (cointainedNeighbor)
-                    priorityQueue.Add(neighbor);
+                if (containedNeighbor)
+                    priorityQueue.Add(neighborPriority);
             }
 
             //var removed = priorityQueue.Remove(current);
@@ -93,8 +95,7 @@ public class Pathfinder : ScriptableObject
 
         //Debug.Log("Path Founded!!!!");
 
-        List<PathNode> res = new List<PathNode>();
-        res.Add(destination);
+        List<PathNode> res = new List<PathNode> { destination };
 
         var path = destination;
 
@@ -108,18 +109,10 @@ public class Pathfinder : ScriptableObject
 
         //Debug.Log("Ended");
 
-        var time = stopwatch.ElapsedTicks;
         stopwatch.Stop();
-        Debug.Log($"Execution Time: {stopwatch.ElapsedMilliseconds}");
-
-        stopwatch.Stop();
+        Debug.Log($"Execution Time (milliseconds): {stopwatch.ElapsedMilliseconds}");
 
         return res;
-    }
-
-    public void DebugDraw(List<PathNode> path)
-    {
-
     }
 
     public int Heuristic(PathNode a, PathNode b)
@@ -138,42 +131,48 @@ public class Pathfinder : ScriptableObject
     }
 }
 
-public class PathNodeComparer : IComparer<PathNode>
+//public class PathNodeComparer : IComparer<PathNode>
+//{
+//    public int Compare(PathNode a, PathNode b)
+//    {
+//        if (a == null || b == null)
+//            return 0;
+//        if (a.X == b.X && a.Y == b.Y)
+//            return 0;
+
+//        var res = a.Priority.CompareTo(b.Priority);
+
+//        if (res != 0)
+//            return res;
+
+//        res = a.X.CompareTo(b.X);
+//        if (res != 0)
+//            return res;
+//        return a.Y.CompareTo(b.Y);
+//    }
+//}
+
+public struct PathNodePriority
 {
-    public int Compare(PathNode a, PathNode b)
+    public PathNode node;
+    public int priority;
+
+    public PathNodePriority(PathNode node, int priority)
     {
-        if (a == null || b == null)
-            return 0;
-        if (a.X == b.X && a.Y == b.Y)
-            return 0;
-
-        var res = a.Priority.CompareTo(b.Priority);
-
-        if (res != 0)
-            return res;
-
-        res = a.X.CompareTo(b.X);
-        if (res != 0)
-            return res;
-        return a.Y.CompareTo(b.Y);
+        this.node = node;
+        this.priority = priority;
     }
 }
 
-public class PathNodePairComparer : IComparer<KeyValuePair<PathNode, int>>
+public class PathNodePriorityComparer : IComparer<PathNodePriority>
 {
-    public int Compare(KeyValuePair<PathNode, int> a, KeyValuePair<PathNode, int> b)
+    public int Compare(PathNodePriority a, PathNodePriority b)
     {
-        if (a.Key.X == b.Key.X && a.Key.Y == b.Key.Y)
+        if (a.node == b.node)
             return 0;
 
-        var res = a.Value.CompareTo(b.Value);
+        var res = a.priority.CompareTo(b.priority);
 
-        if (res != 0)
-            return res;
-
-        res = a.Key.X.CompareTo(b.Key.X);
-        if (res != 0)
-            return res;
-        return a.Key.Y.CompareTo(b.Key.Y);
+        return res == 0 ? -1 : res;
     }
 }

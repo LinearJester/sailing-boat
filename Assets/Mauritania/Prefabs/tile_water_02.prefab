@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 595462031260497375}
   - component: {fileID: 2274527821338244752}
   - component: {fileID: 6695950504635238579}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: tile_water_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b22563b6929114c4797daf8bb5007353, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TextMeshPro: {fileID: 7725771967244602425}
   highlightColor: {r: 1, g: 0, b: 1, a: 1}
 --- !u!1 &4112867229823651862
 GameObject:
@@ -83,7 +82,7 @@ GameObject:
   - component: {fileID: 5129682064057095135}
   - component: {fileID: 1248367391081438939}
   - component: {fileID: 7725771967244602425}
-  m_Layer: 5
+  m_Layer: 4
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,13 +219,13 @@ GameObject:
   - component: {fileID: 1716067091750687745}
   - component: {fileID: 3827694216469752289}
   - component: {fileID: 3725228934054348817}
-  m_Layer: 5
+  m_Layer: 4
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4935641039042793783
 RectTransform:
   m_ObjectHideFlags: 0
@@ -369,6 +368,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b8a337701287ea04eab0bf90971043fb, type: 3}
       propertyPath: m_Name
       value: water_mask
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b8a337701287ea04eab0bf90971043fb, type: 3}
+      propertyPath: m_Layer
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

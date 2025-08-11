@@ -131,6 +131,8 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
+  - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -205,13 +207,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.55999315, y: 0, z: 0, w: 0.8284973}
+  m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
   m_LocalPosition: {x: 23.12, y: 18.1, z: -32.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 31.816, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -256,6 +258,37 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &330585548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1a4363159fb9eb44850b8618a85449b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 2
+  offsetY: 6
+  offsetZ: -3.5
+--- !u!114 &330585549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b4cc203aa6414fae5c798d1d0e7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 16
+  m_MaxRayIntersections: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -534,14 +567,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89b044affeeb3844c86cc0b9a62bd49d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapTextAsset: {fileID: 4900000, guid: 60f4b7f2ec111494b8d26b3d4ab90f3c, type: 3}
-  TileSize: {x: 1, y: 0.33, z: 0.9}
-  BackgroundSize: {x: 16, y: 6}
-  EnvironmentDensity: 50.3
-  TilesKey: tile
-  WaterKey: water
-  BackgroundKey: background
-  EnvironmentKey: environment
+  tileSize: {x: 1, y: 0.3, z: 0.9}
+  backgroundSize: {x: 16, y: 6}
+  environmentDensity: 50.3
+  boatStartPos: {x: 0, y: 0}
+  cameraFollow: {fileID: 330585548}
+  pathfinder: {fileID: 11400000, guid: 43b3bcf2f262a1046a8694ba0ce5a9fd, type: 2}
+  gridBoatController: {fileID: 1451696125}
+  mapKey: map1
+  tilesKey: tile
+  boatKey: boat
+  waterKey: water
+  backgroundKey: background
+  environmentKey: environment
 --- !u!4 &988767551
 Transform:
   m_ObjectHideFlags: 0
@@ -602,6 +640,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1451696124
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1451696126}
+  - component: {fileID: 1451696125}
+  m_Layer: 0
+  m_Name: HexGridBoatController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1451696125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451696124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c60f65c2b6e4f614ba5bc197d89bfa55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathfinder: {fileID: 11400000, guid: 43b3bcf2f262a1046a8694ba0ce5a9fd, type: 2}
+--- !u!4 &1451696126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451696124}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 22.524761, y: 0.36714935, z: -43.615788}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -612,3 +695,4 @@ SceneRoots:
   - {fileID: 988767551}
   - {fileID: 1223544299}
   - {fileID: 605743330}
+  - {fileID: 1451696126}
